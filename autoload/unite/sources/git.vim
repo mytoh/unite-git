@@ -2,6 +2,9 @@
 " LICENSE: Public Domain
 " AUTHOR: Tokuhiro Matsuno
 
+let s:V = vital#of('vital')
+let s:P = s:V.import('Prelude')
+
 let s:source = {
 \   'name': 'git',
 \ }
@@ -17,12 +20,13 @@ function! s:create_candidate(val)
     \   "source": "git",
     \   "kind": "file",
     \   "action__path": a:val,
-    \   "action__directory": unite#path2directory(a:val)
+    \   "action__directory": s:P.path2project_directory(a:val)
     \ }
 endfunction
 
 function! s:source.gather_candidates(args, context)
-    let lines = split(system("git ls-files"), "\n")
+    let lines = filter(split(P.system("git ls-files `git rev-parse --show-toplevel`"), "\n")
+                \ , 'empty(v:val) || isdirectory(v:val) || filereadable(v:val)')
     return filter(map(lines, 's:create_candidate(v:val)'), 'len(v:val) > 0')
 endfunction
 
