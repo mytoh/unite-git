@@ -29,7 +29,7 @@ function! s:source.gather_candidates(args, context)
   let projdir = s:P.path2project_directory(a:context.buffer_name)
   echomsg projdir
   execute 'lcd' . projdir
-  let lines = filter(split(s:P.system("git ls-files `git rev-parse --show-toplevel`"), "\n")
+  let lines = filter(split(s:P.system("git ls-files"), "\n")
         \ , 'empty(v:val) || isdirectory(v:val) || filereadable(v:val)')
   return filter(map(lines, 's:create_candidate(v:val)'), 'len(v:val) > 0')
   execute 'lcd' . curdir
