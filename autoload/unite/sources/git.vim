@@ -2,8 +2,7 @@
 " LICENSE: Public Domain
 " AUTHOR: Tokuhiro Matsuno
 
-let s:V = vital#of('vital')
-let s:P = s:V.import('Prelude')
+let s:Prelude = vital#of('unite-git').import('Prelude')
 
 let s:source = {
       \   'name': 'git',
@@ -20,16 +19,16 @@ function! s:create_candidate(val)
         \   "source": "git",
         \   "kind": "file",
         \   "action__path": a:val,
-        \   "action__directory": s:P.path2project_directory(a:val),
+        \   "action__directory": s:Prelude.path2project_directory(a:val),
         \ }
 endfunction
 
 function! s:source.gather_candidates(args, context)
   let curdir = getcwd()
-  let projdir = s:P.path2project_directory(a:context.buffer_name)
+  let projdir = s:Prelude.path2project_directory(a:context.buffer_name)
   echomsg projdir
   execute 'lcd' . projdir
-  let lines = filter(split(s:P.system("git ls-files"), "\n")
+  let lines = filter(split(s:Prelude.system("git ls-files"), "\n")
         \ , 'empty(v:val) || isdirectory(v:val) || filereadable(v:val)')
   return filter(map(lines, 's:create_candidate(v:val)'), 'len(v:val) > 0')
   execute 'lcd' . curdir
